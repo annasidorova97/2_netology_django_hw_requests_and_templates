@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.urls import reverse
 import os
@@ -10,13 +11,14 @@ def index(request):
 
 
 def bus_stations(request):
-    current_page = 1
+    current_page = int(request.GET.get('page', 1))
     next_page_url = 'write your url'
     bus_stations_list = get_list_of_dicts(abs_path_to_file(r'pagination\data-398-2018-08-30.csv'), list_of_dicts=None)
+    paginator = Paginator(bus_stations_list, 10)
+    bus_stations_list = paginator.get_page(current_page)
     return render(request, 'index.html', context={
         'bus_stations': bus_stations_list,
         'current_page': current_page,
         'prev_page_url': None,
         'next_page_url': next_page_url,
     })
-
